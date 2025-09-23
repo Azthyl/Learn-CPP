@@ -67,7 +67,8 @@ class UserManager{
             if (LowerName(nom_utilisateur) == LowerName(elem.GetUserName())){
                 if (elem.CheckMDP(mdp)){
                 cout<<"connecté au compte de "<<elem.GetUserName()<<endl;
-                return nom_utilisateur;}
+                user_default = nom_utilisateur;
+                return user_default;}
                 else { cout<<"mot de passe incorrect\n";return user_default;}
             }
         }
@@ -75,9 +76,9 @@ class UserManager{
         return user_default;
     }
 
-    bool DeleteUser(const string& nom_utilisateur, const string& mdp_test){
+    bool DeleteUser(const string& mdp_test){
         for (size_t n = 0; n< Users.size(); n ++){
-            if (LowerName(nom_utilisateur) == LowerName(Users[n].GetUserName())){
+            if (LowerName(user_default) == LowerName(Users[n].GetUserName())){
                 if (Users[n].CheckMDP(mdp_test)){
                 Users.erase(Users.begin() + n);
                 cout<<"utilisateur supprimé"<<endl;
@@ -89,9 +90,9 @@ class UserManager{
     return false;
 }    
 
-bool ChangeEmail (const string& nom_utilisateur, const string& mdp_test, const string& new_email) { //setter
+bool ChangeEmail (const string& mdp_test, const string& new_email) { //setter
         for (auto &u : Users){
-            if (LowerName(nom_utilisateur) == LowerName(u.GetUserName())){
+            if (LowerName(user_default) == LowerName(u.GetUserName())){
                 if (u.CheckMDP(mdp_test)){
                     u.ChangeEmail(new_email);
                     cout<<"email modifié avec succès"<<endl;
@@ -101,9 +102,9 @@ bool ChangeEmail (const string& nom_utilisateur, const string& mdp_test, const s
     }
 }cout <<"Utilisateur pas trouvé"<<endl; return false;
 }
-    bool ChangeMDP (const string& nom_utilisateur, const string& mdp_test, const string& new_mdp) { //setter
+    bool ChangeMDP (const string& mdp_test, const string& new_mdp) { //setter
         for (auto &u : Users){
-            if (LowerName(nom_utilisateur) == LowerName(u.GetUserName())){
+            if (LowerName(user_default) == LowerName(u.GetUserName())){
                 if (u.CheckMDP(mdp_test)){
                     u.ChangeMDP(new_mdp);
                     cout<<"mot de passe modifié avec succès"<<endl;
@@ -130,7 +131,7 @@ int main (){
 
     int choix, choix2;
     bool quit = false, quit2 = false;
-    string email, nom_utilisateur, mdp, CurrentUser;
+    string email, nom_utilisateur, mdp;
     UserManager UserStore;
 
     while (!quit){
@@ -157,8 +158,7 @@ int main (){
                 cin>> nom_utilisateur;
                 cout<<"mot de passe : \n";
                 cin>>mdp;
-                CurrentUser = UserStore.ConnectUser(nom_utilisateur, mdp);
-                if (!CurrentUser.empty()){
+                if (!UserStore.ConnectUser(nom_utilisateur, mdp).empty()){
                     quit2 = false;
                     while (!quit2){
                         cout<<"1. Changer d'adresse mail\n";
@@ -174,7 +174,7 @@ int main (){
                                     cin>>mdp_test; 
                                     cout<<"Nouveau mail : "<<endl;
                                     cin>>new_email;
-                                    UserStore.ChangeEmail(CurrentUser,mdp_test, new_email);                           
+                                    UserStore.ChangeEmail(mdp_test, new_email);                           
                                     break;}
 
                             case 2: {
@@ -183,16 +183,15 @@ int main (){
                                 cin>>mdp_test;
                                 cout<<"Nouveau mot de passe : "<<endl;
                                 cin>>new_MDP;
-                                UserStore.ChangeMDP(CurrentUser, mdp_test, new_MDP);
+                                UserStore.ChangeMDP(mdp_test, new_MDP);
                                 break;}
 
                              case 3 :{
                                 cout<<"mot de passe : \n";
                                 cin>>mdp;
-                                bool deleted = UserStore.DeleteUser(CurrentUser, mdp);
+                                bool deleted = UserStore.DeleteUser(mdp);
                                 if (deleted){
-                                    CurrentUser = "";
-                                    cout << "Vous avez été déconnecté car le compte a été supprimé.\n";
+                                    UserStore.Deconnect();
                                     quit2 = true;}
                                 
                                 break;
