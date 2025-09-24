@@ -17,7 +17,7 @@ class Utilisateur {
     bool CheckMDP (const std::string& mdp_test) const;
 
     private : 
-    std::string email, nom_utilisateur, mdp;
+    std::string email, nom_utilisateur, hash;
 
 };
 

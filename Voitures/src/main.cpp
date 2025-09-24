@@ -1,11 +1,13 @@
-#include <iostream>
-#include <string>
 #include "UserManager.hpp"
 #include "utilisateur.hpp"
+#include "PasswordHasher.hpp"
+#include <iostream>
 
 using namespace std;
 
 int main (){
+
+    
 
     int choix, choix2;
     bool quit = false, quit2 = false;
